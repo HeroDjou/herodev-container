@@ -1,0 +1,150 @@
+@echo off
+setlocal
+
+set BASEDIR=%~dp0
+set BASEDIR=%BASEDIR:~0,-1%
+
+REM --------- ESTRUTURA ---------
+if not exist "%BASEDIR%\volumes" mkdir "%BASEDIR%\volumes"
+if not exist "%BASEDIR%\volumes\workspace" mkdir "%BASEDIR%\volumes\workspace"
+if not exist "%BASEDIR%\volumes\workspace\www" mkdir "%BASEDIR%\volumes\workspace\www"
+if not exist "%BASEDIR%\volumes\db" mkdir "%BASEDIR%\volumes\db"
+if not exist "%BASEDIR%\volumes\vscode\config" mkdir "%BASEDIR%\volumes\vscode\config"
+if not exist "%BASEDIR%\volumes\vscode\data" mkdir "%BASEDIR%\volumes\vscode\data"
+
+REM --------- PODMAN ---------
+podman machine start >nul 2>&1
+timeout /t 5 /nobreak >nul
+
+podman container exists herodev
+IF %ERRORLEVEL% EQU 0 (
+    podman start herodev
+) ELSE (
+    podman run -d ^
+      --name herodev ^
+      --privileged ^
+      --systemd=always ^
+      -p 8080:80 ^
+      -p 12777:12777 ^
+      -v "%BASEDIR%\volumes\workspace:/workspace" ^
+      -v "%BASEDIR%\volumes\db:/var/lib/mysql" ^
+      -v "%BASEDIR%\volumes\vscode\config:/home/dev/.config/code-server" ^
+      -v "%BASEDIR%\volumes\vscode\data:/home/dev/.local/share/code-server" ^
+      herodev-all
+)
+
+podman exec herodev systemctl daemon-reload
+podman exec herodev systemctl enable apache2 mariadb code-server
+podman exec herodev systemctl start apache2 mariadb code-server
+echo.
+echo ==========================================
+echo HERODEV ONLINE
+echo ==========================================
+echo Web:        http://localhost:8080
+echo phpMyAdmin: http://localhost:8080/phpmyadmin
+echo VS Code:    http://localhost:12777
+echo ==========================================
+echo.
+
+REM --------- GUI VSDESKTOP e outras ---------
+:GUI_PROMPT
+echo ==========================================
+echo INTERFACE GRAFICA
+echo ==========================================
+set /p RUN_GUI="Deseja executar a GUI? (S/N): "
+
+REM Verifica S ou Y para SIM
+if /i "%RUN_GUI%"=="S" goto CHECK_GUI
+if /i "%RUN_GUI%"=="Y" goto CHECK_GUI
+
+REM Verifica N para NAO
+if /i "%RUN_GUI%"=="N" goto TERMINAL_ONLY
+
+REM Entrada invalida
+echo.
+echo Opcao invalida! Digite S ou N.
+timeout /t 2 /nobreak >nul
+goto GUI_PROMPT
+
+REM --------- TERMINAL APENAS ---------
+:TERMINAL_ONLY
+echo.
+echo Iniciando terminal do container...
+timeout /t 2 /nobreak >nul
+start cmd /k podman exec -it herodev bash
+goto END
+
+REM --------- VERIFICAR/BUILD GUI ---------
+:CHECK_GUI
+echo Verificando VSDesktop...
+
+set GUI_PATH=%BASEDIR%\volumes\workspace\vsdesktop\out\vsdesktop-win32-x64
+set GUI_EXE=%GUI_PATH%\vsdesktop.exe
+
+if exist "%GUI_EXE%" (
+    echo.
+    echo Iniciando VSDesktop...
+    timeout /t 2 /nobreak >nul
+    start "" "%GUI_EXE%"
+    goto END
+) else (
+    echo VSDesktop nao encontrado!
+    echo.
+    echo Sera necessario compilar na primeira execucao.
+    echo Isso pode levar alguns minutos...
+    echo.
+    pause
+
+    REM Verificar se a pasta vsdesktop existe
+    if not exist "%BASEDIR%\volumes\workspace\vsdesktop" (
+        echo.
+        echo Erro: Pasta vsdesktop nao encontrada em:
+        echo %BASEDIR%\volumes\workspace\vsdesktop
+        echo.
+        echo Certifique-se de que o repositorio foi clonado corretamente.
+        echo.
+        pause
+        goto END
+    )
+
+    echo.
+    echo Iniciando compilacao do VSDesktop...
+    echo Abrindo terminal do container para build...
+    echo.
+    echo Comando a executar:
+    echo   cd /workspace/vsdesktop
+    echo   npm run package:win
+    echo.
+    timeout /t 3 /nobreak >nul
+
+    REM Abre terminal interativo para executar o build
+    start cmd /k podman exec -it herodev bash -c "cd /workspace/vsdesktop && npm run package:win"
+
+    echo.
+    echo Build em progresso! Acompanhe no terminal do container.
+    echo.
+    echo Aguardando conclusao da compilacao...
+    echo.
+
+    REM Loop de verificacao do executavel
+    :BUILD_LOOP
+    timeout /t 5 /nobreak >nul
+    
+    if exist "%GUI_EXE%" (
+        echo Iniciando VSDesktop...
+        timeout /t 2 /nobreak >nul
+        start "" "%GUI_EXE%"
+        goto END
+    ) else (
+        echo Verificando...
+        goto BUILD_LOOP
+    )
+)
+
+
+:END
+echo.
+REM Abre terminal interativo no container
+start cmd /k podman exec -it herodev bash
+pause
+endlocal
