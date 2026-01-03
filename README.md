@@ -99,7 +99,7 @@ herodev-cont/
 
 1. Clone ou copie o repositório:
 ```cmd
-git clone https://github.com/herodjou/herodev-cont.git
+git clone https://github.com/herodjou/herodev-container.git
 cd herodev-cont
 ```
 
