@@ -26,6 +26,13 @@ IF %ERRORLEVEL% EQU 0 (
       --systemd=always ^
       -p 8080:80 ^
       -p 12777:12777 ^
+      -p 8081:8081 ^
+      -p 6379:6379 ^
+      -p 27017:27017 ^
+      -p 8082:8082 ^
+      -p 8083:8083 ^
+      -p 9090:9090 ^
+      -p 3000:3000 ^
       -v "%BASEDIR%\volumes\workspace:/workspace" ^
       -v "%BASEDIR%\volumes\db:/var/lib/mysql" ^
       -v "%BASEDIR%\volumes\vscode\config:/home/dev/.config/code-server" ^
@@ -34,15 +41,37 @@ IF %ERRORLEVEL% EQU 0 (
 )
 
 podman exec herodev systemctl daemon-reload
+
+REM Habilitar e iniciar serviços core
 podman exec herodev systemctl enable apache2 mariadb code-server
 podman exec herodev systemctl start apache2 mariadb code-server
+
+REM Detectar e iniciar serviços opcionais se instalados
+podman exec herodev bash -c "[ -f /usr/local/bin/filebrowser ] && systemctl enable filebrowser && systemctl start filebrowser || true"
+podman exec herodev bash -c "[ -f /usr/bin/redis-server ] && systemctl enable redis-server && systemctl start redis-server || true"
+podman exec herodev bash -c "[ -f /usr/bin/mongod ] && systemctl enable mongod && systemctl start mongod || true"
+podman exec herodev bash -c "[ -f /usr/bin/mongo-express ] && systemctl enable mongo-express && systemctl start mongo-express || true"
+podman exec herodev bash -c "[ -f /usr/sbin/nginx ] && systemctl enable nginx php8.1-fpm && systemctl start nginx php8.1-fpm || true"
+podman exec herodev bash -c "[ -f /usr/local/bin/prometheus ] && systemctl enable prometheus && systemctl start prometheus || true"
+podman exec herodev bash -c "[ -f /usr/sbin/grafana-server ] && systemctl enable grafana-server && systemctl start grafana-server || true"
+
 echo.
 echo ==========================================
 echo HERODEV ONLINE
 echo ==========================================
-echo Web:        http://localhost:8080
-echo phpMyAdmin: http://localhost:8080/phpmyadmin
-echo VS Code:    http://localhost:12777
+echo.
+echo SERVICOS CORE:
+echo   Web:        http://localhost:8080
+echo   phpMyAdmin: http://localhost:8080/phpmyadmin
+echo   VS Code:    http://localhost:12777
+
+REM Detectar e listar serviços opcionais
+podman exec herodev bash -c "[ -f /usr/local/bin/filebrowser ] && echo '  File Browser: http://localhost:8081' || true"
+podman exec herodev bash -c "[ -f /usr/bin/mongo-express ] && echo '  Mongo Express: http://localhost:8082' || true"
+podman exec herodev bash -c "[ -f /usr/sbin/nginx ] && echo '  Nginx: http://localhost:8083' || true"
+podman exec herodev bash -c "[ -f /usr/local/bin/prometheus ] && echo '  Prometheus: http://localhost:9090' || true"
+podman exec herodev bash -c "[ -f /usr/sbin/grafana-server ] && echo '  Grafana: http://localhost:3000' || true"
+
 echo ==========================================
 echo.
 
@@ -145,6 +174,6 @@ if exist "%GUI_EXE%" (
 :END
 echo.
 REM Abre terminal interativo no container
-start cmd /k podman exec -it herodev bash
+REM start cmd /k podman exec -it herodev bash
 pause
 endlocal
