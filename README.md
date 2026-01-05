@@ -86,6 +86,7 @@ herodev-cont/
 ├── win_create-herodev.bat        # Build da imagem (Windows)
 ├── win_start-herodev.bat         # Inicia container (Windows)
 ├── win_stop-herodev.bat          # Para container (Windows)
+├── win_setup-vsdesktop.bat       # Compila VSDesktop (Windows)
 ├── win_backup-herodev.bat        # Backup do ambiente (Windows)
 ├── win_limpar_vm.bat             # Remove Podman Machine (Windows)
 │
