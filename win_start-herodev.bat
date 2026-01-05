@@ -60,7 +60,7 @@ echo ==========================================
 echo HERODEV ONLINE
 echo ==========================================
 echo.
-echo SERVICOS CORE:
+echo SERVIÇOS CORE:
 echo   Web:        http://localhost:8080
 echo   phpMyAdmin: http://localhost:8080/phpmyadmin
 echo   VS Code:    http://localhost:12777
@@ -78,7 +78,7 @@ echo.
 REM --------- GUI VSDESKTOP e outras ---------
 :GUI_PROMPT
 echo ==========================================
-echo INTERFACE GRAFICA
+echo INTERFACE GRÁFICA
 echo ==========================================
 set /p RUN_GUI="Deseja executar a GUI? (S/N): "
 
@@ -86,12 +86,12 @@ REM Verifica S ou Y para SIM
 if /i "%RUN_GUI%"=="S" goto CHECK_GUI
 if /i "%RUN_GUI%"=="Y" goto CHECK_GUI
 
-REM Verifica N para NAO
+REM Verifica N para NÃO
 if /i "%RUN_GUI%"=="N" goto TERMINAL_ONLY
 
-REM Entrada invalida
+REM Entrada inválida
 echo.
-echo Opcao invalida! Digite S ou N.
+echo Opção inválida! Digite S ou N.
 timeout /t 2 /nobreak >nul
 goto GUI_PROMPT
 
@@ -117,9 +117,9 @@ if exist "%GUI_EXE%" (
     start "" "%GUI_EXE%"
     goto END
 ) else (
-    echo VSDesktop nao encontrado!
+    echo VSDesktop não encontrado!
     echo.
-    echo Sera necessario compilar na primeira execucao.
+    echo Será necessário compilar na primeira execução.
     echo Isso pode levar alguns minutos...
     echo.
     pause
@@ -127,17 +127,17 @@ if exist "%GUI_EXE%" (
     REM Verificar se a pasta vsdesktop existe
     if not exist "%BASEDIR%\volumes\workspace\vsdesktop" (
         echo.
-        echo Erro: Pasta vsdesktop nao encontrada em:
+        echo Erro: Pasta vsdesktop não encontrada em:
         echo %BASEDIR%\volumes\workspace\vsdesktop
         echo.
-        echo Certifique-se de que o repositorio foi clonado corretamente.
+        echo Certifique-se de que o repositório foi clonado corretamente.
         echo.
         pause
         goto END
     )
 
     echo.
-    echo Iniciando compilacao do VSDesktop...
+    echo Iniciando compilação do VSDesktop...
     echo Abrindo terminal do container para build...
     echo.
     echo Comando a executar:
@@ -152,10 +152,10 @@ if exist "%GUI_EXE%" (
     echo.
     echo Build em progresso! Acompanhe no terminal do container.
     echo.
-    echo Aguardando conclusao da compilacao...
+    echo Aguardando conclusão da compilação...
     echo.
 
-    REM Loop de verificacao do executavel
+    REM Loop de verificação do executável
     :BUILD_LOOP
     timeout /t 5 /nobreak >nul
     

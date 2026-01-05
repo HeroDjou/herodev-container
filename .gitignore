@@ -1,25 +1,55 @@
+# Volumes persistentes
 /volumes/*
 !/volumes/.gitkeep
+
+# Temporários e cache
 tmp/
 temp/
 .cache/
+
+# Node.js
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-store/
+
+# Python
 __pycache__/
 *.py[cod]
 .venv/
 venv/
-.env
+
+# PHP
 vendor/
 composer.lock
+
+# Logs
 *.log
+
+# Sistema Operacional
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# IDEs
 .idea/
 .vscode/
+
+# Executáveis
 *.exe
+
+# Scripts temporários
 setup-vsdesktop.bat
+
+# Configurações locais (IMPORTANTE: Não commitar!)
+.backup-config
+
+# Credenciais e informações sensíveis
+*.pem
+*.key
+*.crt
+.env
+.env.local
+*-credentials
+.herodev-credentials
