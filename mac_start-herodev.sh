@@ -219,13 +219,30 @@ offer_build() {
     # Verificar se a pasta vsdesktop existe
     if [ ! -d "$BASEDIR/volumes/workspace/vsdesktop" ]; then
         echo ""
-        echo "Erro: Pasta vsdesktop não encontrada em:"
+        echo "Pasta vsdesktop não encontrada em:"
         echo "$BASEDIR/volumes/workspace/vsdesktop"
         echo ""
-        echo "Certifique-se de que o repositório foi clonado corretamente."
-        echo ""
-        read -r -p "Pressione ENTER para continuar..."
-        return
+        while true; do
+            read -r -p "Deseja executar o setup do VSDesktop agora? (S/N): " RUN_SETUP
+            case "$RUN_SETUP" in
+                s|S|y|Y)
+                    echo ""
+                    echo "Executando setup do VSDesktop..."
+                    "$BASEDIR/mac_setup-vsdesktop.sh"
+                    return
+                    ;;
+                n|N)
+                    echo ""
+                    echo "Operação cancelada."
+                    return
+                    ;;
+                *)
+                    echo ""
+                    echo "Opção inválida! Digite S ou N."
+                    sleep 2
+                    ;;
+            esac
+        done
     fi
     
     build_vsdesktop "$SUGGESTED_ARCH"

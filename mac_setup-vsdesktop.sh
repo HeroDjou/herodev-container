@@ -31,8 +31,8 @@ if [ -d "$VSDESKTOP_ARM" ] || [ -d "$VSDESKTOP_X64" ]; then
     echo "VSDesktop já existe em volumes/workspace/vsdesktop"
     echo ""
     read -r -p "Deseja recompilar? (S/N): " REBUILD
-    case "${REBUILD,,}" in
-        s|y) ;;
+    case "$REBUILD" in
+        s|S|y|Y) ;;
         *)
             echo ""
             echo "Operação cancelada."
@@ -128,8 +128,8 @@ echo "e escolher a opção de GUI."
 echo ""
 
 read -r -p "Deseja executar agora? (S/N): " LAUNCH
-case "${LAUNCH,,}" in
-    s|y)
+case "$LAUNCH" in
+    s|S|y|Y)
         echo ""
         echo "Iniciando VSDesktop..."
         if [ -d "$VSDESKTOP_ARM/vsdesktop.app" ]; then

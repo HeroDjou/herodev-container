@@ -127,11 +127,30 @@ if exist "%GUI_EXE%" (
     REM Verificar se a pasta vsdesktop existe
     if not exist "%BASEDIR%\volumes\workspace\vsdesktop" (
         echo.
-        echo Erro: Pasta vsdesktop não encontrada em:
+        echo Pasta vsdesktop não encontrada em:
         echo %BASEDIR%\volumes\workspace\vsdesktop
         echo.
-        echo Certifique-se de que o repositório foi clonado corretamente.
+        :ASK_SETUP
+        set /p RUN_SETUP="Deseja executar o setup do VSDesktop agora? (S/N): "
+        
+        if /i "%RUN_SETUP%"=="S" goto RUN_SETUP
+        if /i "%RUN_SETUP%"=="Y" goto RUN_SETUP
+        if /i "%RUN_SETUP%"=="N" goto CANCEL_SETUP
+        
         echo.
+        echo Opção inválida! Digite S ou N.
+        timeout /t 2 /nobreak >nul
+        goto ASK_SETUP
+        
+        :RUN_SETUP
+        echo.
+        echo Executando setup do VSDesktop...
+        call "%BASEDIR%\win_setup-vsdesktop.bat"
+        goto END
+        
+        :CANCEL_SETUP
+        echo.
+        echo Operação cancelada.
         pause
         goto END
     )

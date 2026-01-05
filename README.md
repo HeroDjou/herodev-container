@@ -712,10 +712,11 @@ Arquivo `config.yaml` do code-server.
 **Conteúdo padrão:**
 ```yaml
 bind-addr: 0.0.0.0:12777
-auth: password
-password: dev
+auth: none
 cert: false
 ```
+
+> Por padrão, o code-server está configurado sem senha (`auth: none`). Para adicionar autenticação, edite o arquivo de configuração e reinicie o serviço.
 
 ### vscode/data
 

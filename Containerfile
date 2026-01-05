@@ -90,7 +90,7 @@ RUN mkdir -p \
     /home/dev/.local/share/code-server \
  && chown -R dev:dev /workspace /home/dev
 
-RUN printf "bind-addr: 0.0.0.0:12777\nauth: password\npassword: dev\ncert: false\n" \
+RUN printf "bind-addr: 0.0.0.0:12777\nauth: none\ncert: false\n" \
     > /home/dev/.config/code-server/config.yaml
 
 # -------- EXTENSÕES VSCODE --------
