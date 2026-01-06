@@ -265,16 +265,17 @@ build_vsdesktop() {
     echo "Iniciando compilação do VSDesktop ($ARCH_NAME)..."
     echo "Abrindo terminal do container para build..."
     echo ""
-    echo "Comando a executar:"
+    echo "Comandos a executar:"
     echo "  cd /workspace/vsdesktop"
+    echo "  npm install"
     echo "  npm run $BUILD_TARGET"
     echo ""
     sleep 3
     
-    # Executar build em novo terminal
-    osascript -e "tell app \"Terminal\" to do script \"podman exec -it herodev bash -c 'cd /workspace/vsdesktop && npm run $BUILD_TARGET'\"" &>/dev/null || \
-    open -a Terminal -n --args -c "podman exec -it herodev bash -c 'cd /workspace/vsdesktop && npm run $BUILD_TARGET'" &>/dev/null || \
-    podman exec -it herodev bash -c "cd /workspace/vsdesktop && npm run $BUILD_TARGET"
+    # Executar npm install e build em novo terminal
+    osascript -e "tell app \"Terminal\" to do script \"podman exec -it herodev bash -c 'cd /workspace/vsdesktop && npm install && npm run $BUILD_TARGET'\"" &>/dev/null || \
+    open -a Terminal -n --args -c "podman exec -it herodev bash -c 'cd /workspace/vsdesktop && npm install && npm run $BUILD_TARGET'" &>/dev/null || \
+    podman exec -it herodev bash -c "cd /workspace/vsdesktop && npm install && npm run $BUILD_TARGET"
     
     echo ""
     echo "Build em progresso! Acompanhe no terminal do container."

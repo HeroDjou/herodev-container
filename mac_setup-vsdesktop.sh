@@ -63,6 +63,11 @@ if [ ! -d "$BASEDIR/volumes/workspace/vsdesktop" ]; then
     echo ""
 fi
 
+echo "Configurando npm para builds grandes..."
+echo ""
+podman exec herodev bash -c "npm config set fetch-retry-maxtimeout 120000 && npm config set fetch-timeout 120000"
+
+echo ""
 echo "Instalando dependências NPM..."
 echo "(Isso pode levar alguns minutos...)"
 echo ""

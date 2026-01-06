@@ -159,14 +159,15 @@ if exist "%GUI_EXE%" (
     echo Iniciando compilação do VSDesktop...
     echo Abrindo terminal do container para build...
     echo.
-    echo Comando a executar:
+    echo Comandos a executar:
     echo   cd /workspace/vsdesktop
+    echo   npm install
     echo   npm run package:win
     echo.
     timeout /t 3 /nobreak >nul
 
-    REM Abre terminal interativo para executar o build
-    start cmd /k podman exec -it herodev bash -c "cd /workspace/vsdesktop && npm run package:win"
+    REM Abre terminal interativo para executar npm install e build
+    start cmd /k podman exec -it herodev bash -c "cd /workspace/vsdesktop && npm install && npm run package:win"
 
     echo.
     echo Build em progresso! Acompanhe no terminal do container.
